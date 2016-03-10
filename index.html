@@ -1,0 +1,367 @@
+<!DOCTYPE html>　
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>　Pyramid  </title> 　　　　　　　
+<style>
+svg {border: 1px solid #ccc;
+}
+
+.axis line,
+.axis path {
+  shape-rendering: crispEdges;
+  fill: transparent;
+  stroke: #555;
+}
+.axis text {
+  font-size: 11px;
+}
+
+.bar.left {
+  fill: blue;
+}
+.bar.right {
+  fill: red;
+}
+</style>
+</head>
+<body>
+<p>
+<input type="button" value="衆議院" id="btn1">	
+<input type="button" value="参議院" id="btn2">	
+<input type="button" value="両院" id="btn3">	
+<input type="button" value="population" id="btn4">	
+<input type="button" value="リセット" id="btn5">	
+</p>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script> 
+<script type="text/javascript">
+
+// SET UP DIMENSIONS
+var w = 500,
+    h = 300;
+    
+// margin.middle is distance from center line to each y-axis
+var margin = {
+  top: 20,
+  right: 20,
+  bottom: 24,
+  left: 20,
+  middle: 28
+};
+    
+// the width of each side of the chart
+var regionWidth = w/2 - margin.middle;
+
+// these are the x-coordinates of the y-axes
+var pointA = regionWidth,
+    pointB = w - regionWidth;
+
+
+
+// CREATE SVG
+var svg = d3.select('body').append('svg')
+  .attr('width', margin.left + w + margin.right)
+  .attr('height', margin.top + h + margin.bottom)
+  // ADD A GROUP FOR THE SPACE WITHIN THE MARGINS
+  .append('g')
+    .attr('transform', translation(margin.left, margin.top));
+    
+     
+
+// queue  
+ queue() 
+      .defer(d3.csv, "jimin.csv")
+      .defer(d3.csv,"population.csv")
+      .await(ready); 
+
+
+
+//function ready
+  function ready(error,data1,data2) { 
+ 
+  	var  dataset= data1.map(function(d) { return [ 
+  d.group, +d["shuMale"],+d["shuFemale"], +d["sanMale"],+d["sanFemale"],
+   ]; });
+
+   var dataset2= data2.map(function(d) { return [ 
+  d.group, +d["male"],+d["female"]
+   ]; });
+
+
+
+   console.log(dataset)
+   console.log(dataset2)
+
+
+
+
+// find the maximum data value on either side
+//  since this will be shared by both of the x-axes
+var maxValue = Math.max(
+  d3.max(dataset, function(d) { return (d[1]+d[3]); }), 
+  d3.max(dataset, function(d) { return (d[2]+d[4]); })
+);
+
+// SET UP SCALES
+  
+// the xScale goes from 0 to the width of a region
+//  it will be reversed for the left x-axis
+var xScale = d3.scale.linear()
+  .domain([0, maxValue])
+  .range([0, regionWidth])
+  .nice();
+
+/*
+var xScaleLeft = d3.scale.linear()
+  .domain([0, maxValue])
+  .range([regionWidth, 0]);
+
+var xScaleRight = d3.scale.linear()
+  .domain([0, maxValue])
+  .range([0, regionWidth]);
+*/
+
+var yScale = d3.scale.ordinal()
+  .domain(dataset.map(function(d) { return d[0]; }))
+  .rangeRoundBands([h,0], 0.3);
+
+
+// SET UP AXES
+var yAxisLeft = d3.svg.axis()
+  .scale(yScale)
+  .orient('right')
+  .tickSize(4,0)
+  .tickPadding(margin.middle-4);
+
+var yAxisRight = d3.svg.axis()
+  .scale(yScale)
+  .orient('left')
+  .tickSize(4,0)
+  .tickFormat('');
+
+var xAxisRight = d3.svg.axis()
+  .scale(xScale)
+  .orient('bottom')
+  .tickFormat(d3.format(''));
+
+var xAxisLeft = d3.svg.axis()
+  // REVERSE THE X-AXIS SCALE ON THE LEFT SIDE BY REVERSING THE RANGE
+  .scale(xScale.copy().range([pointA, 0]))
+  .orient('bottom')
+  .tickFormat(d3.format(''));
+
+// MAKE GROUPS FOR EACH SIDE OF CHART
+// scale(-1,1) is used to reverse the left side so the bars grow left instead of right
+var leftBarGroup = svg.append('g')
+  .attr('transform', translation(pointA, 0) + 'scale(-1,1)');//
+var rightBarGroup = svg.append('g')
+  .attr('transform', translation(pointB, 0));
+
+// DRAW AXES   y axis
+svg.append('g')
+  .attr('class', 'axis y left')
+  .attr('transform', translation(pointA, 0))
+  .call(yAxisLeft)
+  .selectAll('text')
+  .style('text-anchor', 'middle');
+
+svg.append('g')
+  .attr('class', 'axis y right')
+  .attr('transform', translation(pointB, 0))
+  .call(yAxisRight);
+   
+     // x axis draw
+svg.append('g')
+  .attr('class', 'axis x left')
+  .attr('transform', translation(0, h))
+  .call(xAxisLeft);
+
+svg.append('g')
+  .attr('class', 'axis x right')
+  .attr('transform', translation(pointB, h))
+  .call(xAxisRight);
+ 
+
+
+
+
+// DRAW BARS
+var lb=leftBarGroup.selectAll('.bar.left')
+  .data(dataset)
+  .enter().append('rect')
+    .attr('class', 'bar left')
+    .attr('x', 0)
+        .style("opacity",.5)
+
+    .attr('y', function(d) { return yScale(d[0]); })
+  .attr('width', 0)
+    .attr('height', yScale.rangeBand())
+    .attr({rx:2,ry:2})
+    
+
+var rb=rightBarGroup.selectAll('.bar.right')
+  .data(dataset)
+  .enter().append('rect')
+    .attr('class', 'bar right')  
+      .attr("id","r")
+    .attr('x', 0)
+    .style("opacity",.5)
+    .attr('y', function(d) { return yScale(d[0]); })
+  .attr('width', 0)
+    .attr('height', yScale.rangeBand())
+    .attr({rx:2,ry:2})     
+    .on("mouseover",function(d){
+	    d3.select(this).style("opacity",1)
+    })
+    .on("mouseout",function(d){
+	    d3.select(this).style("opacity",.6)
+    })     ;
+     
+
+
+
+
+ var lc= leftBarGroup.selectAll('circle')
+  .data(dataset2)
+  .enter().append('circle')　　　　　
+ .attr({ 
+	 cx: function(d){return xScale(0);},
+	 cy: function(d){return yScale(d[0])+7.4;},
+  fill: "purple", 
+  r:0,           　　
+ });
+
+ var rc=rightBarGroup.selectAll('circle')
+  .data(dataset2)
+  .enter().append('circle')
+ .attr({
+	 cx: function(d){return xScale(0);},
+	 cy: function(d){return yScale(d[0])+7.4;},
+  fill: "purple",
+  r:0,
+ })
+
+
+
+
+//function
+//and  buttons
+
+function init1(){
+ lb.transition().duration(900).ease("linear")
+    .attr('width', function(d) { return xScale(d[1]); });
+ 
+ rb
+    .transition().duration(900).ease("linear")
+    .attr('width', function(d) { return xScale(d[2]); })
+      
+    ;
+
+
+
+}
+document.getElementById("btn1").onclick=function(){
+	init1();
+}
+
+
+
+//
+function init2(){
+ lb.transition().duration(900).ease("linear")
+    .attr('width', function(d) { return xScale(d[3]); });
+     
+   rb
+    .transition().duration(900).ease("linear")
+    .attr('width', function(d) { return xScale(d[4]); })
+      
+    ;
+
+}　
+document.getElementById("btn2").onclick=function(){
+	init2();
+}
+　
+//
+
+function init3(){
+	 lb.transition().duration(900).ease("linear")
+    .attr('width', function(d) { return xScale(d[1]+d[3]); });
+	
+　　　　rb    .transition().duration(900).ease("linear")
+       .attr('width', function(d) { return xScale(d[2]+d[4]); })
+      
+    ;
+}
+document.getElementById("btn3").onclick=function(){
+	init3();
+}
+
+
+// function
+function init4(){
+	 lc.attr({fill:"purple"})
+	 .transition()
+.duration(300)
+.ease("linear")
+.attr({　　　　　　　
+	r: 7,　
+})
+.transition()
+.duration(1300)
+.ease("linear")
+.attr({
+	cx: function(d){return xScale(d[1])*2.5;},
+});
+	 
+	  
+	  
+ rc.attr({fill:"purple"})
+ .transition()
+.duration(300)
+.ease("linear")
+.attr({
+　	r: 7,
+})
+.transition()   
+.duration(1300)
+.ease("linear")
+.attr({
+	cx: function(d){return xScale(d[2])*2.5;},
+});
+	 
+	 
+	 
+	 }
+document.getElementById("btn4").onclick=function(){
+	init4();
+}　　　  
+
+function reset(){
+	
+　　　d3.selectAll("circle").attr("fill","none")　
+	
+	
+}
+document.getElementById("btn5").onclick=function(){
+	reset();
+}
+
+
+
+　　
+
+} // function ready
+
+
+
+
+// setting
+function translation(x,y) {
+  return 'translate(' + x + ',' + y + ')';
+  }
+</script>
+ </body>
+</html>
