@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title>
+treemap
+</title>
+<style>
+ svg{ top:60px;
+      border:1px solid blue;
+      position: absolute;}
+
+form{ position:absolute;
+      right: 300px;}
+</style>
+</head>
+<body>
+
+ <form>
+  <input type="button" value="speed" id="btn1">
+  <input type="button" value="fan" id="btn2">
+  <input type="button" value="clever" id="btn3">
+
+
+  <label><input type="radio" name="mode" value="size" checked> speed</label>
+  <label><input type="radio" name="mode" value="count"> fan</label>
+  <label><input type="radio" name="mode" value="mimic"> clever</label>
+ </form>
+
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+// svg
+var w=700,
+    h=400,
+    pad=50;
+    
+var svg = d3.select("body").append("svg")
+          .attr({
+	          width:w,
+	          height:h
+          });
+          
+var color10 = d3.scale.category10();
+var under=svg.append("g")
+          .attr("transform", translation(pad,pad));
+ 
+
+// treemap()
+var treemap = d3.layout.treemap()
+    .size([w-80, h - 80])
+    .padding(1)
+    .sticky(true) // each cell sticks to its position 
+    .value(function(d) { return d["fan"]; })
+    .children(function(d){ return d["what"];})
+  ;
+ 
+
+// json reading　
+
+d3.json("flare.json",function(error,root){
+	if(error) throw error;
+	
+var node =under.datum(root)
+ .selectAll("rect")
+ .data(treemap.nodes)
+ .enter()
+ .append("rect")
+   .call(position)
+	 .attr("fill",function(d){ return d.children ? null : color10(d.parent.name); })
+    .attr("stroke", "white")
+    .attr("stroke-width",2)
+    .attr("opacity", 0.8);
+
+
+
+
+d3.selectAll("input").on("change", function() {
+   
+    var  value; 
+    if(this.value === "count"){value=function(d) { return d["speed"];}}
+    else if(this.value === "mimic"){value=function(d) { return d["clever"];}}
+    else if(this.value === "size"){value=function(d) { return d["fan"]; }}
+    
+ node.data(treemap.value(value).nodes)
+        .transition()
+        .duration(1500)
+        .call(position);
+        
+       });
+     
+     
+     
+        
+document.getElementById("btn1").onclick=function(){
+
+    node.data(treemap.value(function(d) { return d["fan"];}).nodes)
+        .transition()
+        .duration(1500)
+        .call(position)
+      	
+      		}
+
+
+
+document.getElementById("btn2").onclick=function(){
+
+    node.data(treemap.value(function(d) { return d["speed"];}).nodes)
+        .transition()
+        .duration(1500)
+        .call(position)
+      	
+      		}
+
+
+document.getElementById("btn3").onclick=function(){
+  
+     node.data(treemap.value(function(d) { return d["clever"];}).nodes)
+       .transition()
+       .duration(1500)
+       .call(position)
+      	
+      		}
+      		
+
+  
+});
+
+
+
+
+//　function position
+function position(){
+	 this.attr("x", function(d){ return d.x; })
+       .attr("y", function(d){ return d.y; })
+       .attr("width", function(d){ return d.dx; })
+       .attr("height", function(d){ return d.dy; });
+         }
+// setting
+function translation(x,y) {
+  return 'translate(' + x + ',' + y + ')';
+}
+
+</script>
+</body>
+</html>
