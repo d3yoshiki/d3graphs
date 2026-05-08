@@ -3,36 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D3.js 作品集 (2016-2026 Archive)</title>
+    <title>D3.js Visualization Archive | d3yoshiki</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; }
-        h1 { border-bottom: 2px solid #ccc; padding-bottom: 10px; }
-        ul { list-style: none; padding: 0; }
-        li { background: #f4f4f4; margin: 10px 0; padding: 15px; border-radius: 5px; transition: 0.3s; }
-        li:hover { background: #eee; transform: translateX(5px); }
-        a { text-decoration: none; color: #007bff; font-weight: bold; display: block; }
+        /* モダンなCSS設定 */
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 48px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            color: var(--text-sub);
+            font-size: 1.1rem;
+        }
+
+        /* グリッドレイアウト */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-color: var(--primary-color);
+        }
+
+        .card a {
+            display: block;
+            padding: 24px;
+            text-decoration: none;
+            color: var(--text-main);
+            height: 100%;
+        }
+
+        .card-title {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .card-desc {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+        }
+
+        footer {
+            margin-top: 64px;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 0.875rem;
+        }
+
+        /* スマホ対応 */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.8rem; }
+            body { padding: 20px 15px; }
+        }
     </style>
 </head>
 <body>
-    <h1>D3.js Archive</h1>
-    <p>10年前に作成したD3.jsのビジュアライゼーションをGitHub Pagesで復元しました。</p>
-    
-    <ul>
-        <li><a href="political-gap/">日本の政治ギャップ (Political Gap)</a></li>
-        <li><a href="pyramid/">人口ピラミッド (Pyramid)</a></li>
-        <li><a href="example/">日本地図のグラフ (Example)</a></li>
-        <li><a href="circle/">サークル・グラフ (Circle)</a></li>
-        <li><a href="treemap/">ツリーマップ (Treemap)</a></li>
-        <li><a href="halfpiechart/">ハーフパイチャート (Half Pie Chart)</a></li>
-        <li><a href="halfpiechart2/">ハーフパイチャート 2</a></li>
-        <li><a href="slider/">スライダー操作グラフ (Slider)</a></li>
-        <li><a href="quiz/">クイズ形式グラフ (Quiz)</a></li>
-        <li><a href="4choice/">4択グラフ (4choice)</a></li>
-    </ul>
+    <div class="container">
+        <header>
+            <h1>D3.js Visualization Archive</h1>
+            <p class="subtitle">2016年に制作したビジュアライゼーションを現在の環境で復元</p>
+        </header>
+        
+        <ul class="grid">
+            <li class="card">
+                <a href="political-gap/">
+                    <span class="card-title">日本の政治ギャップ</span>
+                    <span class="card-desc">衆議院・参議院の政党別男女比データの可視化</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="pyramid/">
+                    <span class="card-title">人口ピラミッド</span>
+                    <span class="card-desc">動的なアニメーションを用いた人口構成の描画</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="example/">
+                    <span class="card-title">GuardianのデータVisualization</span>
+                    <span class="card-desc"></span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="circle/">
+                    <span class="card-title">サークル・グラフ</span>
+                    <span class="card-desc">円形のデータレイアウトデザイン</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="treemap/">
+                    <span class="card-title">ツリーマップ</span>
+                    <span class="card-desc">階層構造データを面積で表現</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="halfpiechart/">
+                    <span class="card-title">ハーフパイチャート</span>
+                    <span class="card-desc">半円を用いた構成比の表示</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="halfpiechart2/">
+                    <span class="card-title">ハーフパイチャート 2</span>
+                    <span class="card-desc">別パターンの半円グラフデザイン</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="slider/">
+                    <span class="card-title">スライダー操作</span>
+                    <span class="card-desc">インタラクティブな値の変更と連動</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="quiz/">
+                    <span class="card-title">クイズ形式グラフ</span>
+                    <span class="card-desc">回答に合わせて変化するチャート</span>
+                </a>
+            </li>
+            <li class="card">
+                <a href="4choice/">
+                    <span class="card-title">4択グラフ</span>
+                    <span class="card-desc">選択肢に応じたデータフィードバック</span>
+                </a>
+            </li>
+        </ul>
 
-    <footer>
-        <hr>
-        <p>© 2026 d3yoshiki</p>
-    </footer>
+        <footer>
+            <p>© 2026 d3yoshiki | Built with D3.js v3 Archive</p>
+        </footer>
+    </div>
 </body>
 </html>
