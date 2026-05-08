@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title> 　 
+quiz　
+</title>
+ <style> 
+ svg{border:1px solid blue;}　
+ </style>
+</head>   
+<body>  　　
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+var w=500,
+    h=400,
+    pad=70,
+    barWidth=300,
+    barHeight=50;    
+    
+var svg = d3.select("body")
+            .append("svg")　
+            .attr("width", w)
+            .attr("height", h);
+
+var area=svg.append("g")
+          .attr("transform", translation(pad, pad));
+
+
+//flag
+var flag_clicked=false;
+
+// rect 1   wrong
+area.append("rect")
+   .attr("x", 0)
+   .attr("y", 0)
+   .attr("id","rect1")
+   .attr("rx",5)
+      .attr("ry",5)
+   .attr("width", 300)
+   .attr("height", 50)
+   .style("fill","#ccc")
+   .on("click",function(){
+   if(flag_clicked==false){
+	   d3.select(this)  .style("fill","#e66160");
+      ChangeText();
+
+	   d3.select("#rect2").style("fill","#5175ff");
+	   d3.select("#rect3").style("fill","#e6e6e6");
+	   d3.select("#rect4").style("fill","#e6e6e6");
+	   };
+	   flag_clicked=true;
+
+   }); 
+
+// rect 2    True
+area.append("rect")
+   .attr("x", 0)
+      .attr("rx",5)
+      .attr("ry",5)
+         .attr("id","rect2")
+
+   .attr("y", pad)
+      .style("fill","#ccc")
+   .on("click",function(){
+   if(flag_clicked==false){
+	   d3.select(this)  .style("fill","#205df4");
+      ChangeText();
+
+	   d3.select("#rect1").style("fill","#e6e6e6");
+	   d3.select("#rect3").style("fill","#e6e6e6");
+	   d3.select("#rect4").style("fill","#e6e6e6");
+	   };flag_clicked=true;
+   }) 
+   .attr("width", 300)
+   .attr("height", 50);
+ 
+//rect   3   wrong 
+
+area.append("rect")
+   .attr("x", 0)
+   .attr("y", pad*2)
+      .attr("rx",5)
+      .attr("ry",5)
+         .attr("id","rect3")
+      .style("fill","#ccc")
+   .on("click",function(){
+   if(flag_clicked==false){
+	   d3.select(this)  .style("fill","#e66160");
+      ChangeText();
+
+	   d3.select("#rect1").style("fill","#e6e6e6");
+	   d3.select("#rect2").style("fill","#5175ff");
+	   d3.select("#rect4").style("fill","#e6e6e6");
+	   };flag_clicked=true;
+   })
+   .attr("width", 300)
+   .attr("height", 50);
+
+// rect 4 wrong 
+
+area.append("rect")
+   .attr("x", 0)
+      .style("fill","#ccc")
+      .attr("id","rect4")
+
+   .on("click",function(){
+   if(flag_clicked==false){
+	      d3.select(this)  .style("fill","#e66160");
+      ChangeText();
+
+	    d3.select("#rect1").style("fill","#e6e6e6");
+	   d3.select("#rect2").style("fill","#5175ff");
+	   d3.select("#rect3").style("fill","#e6e6e6");
+	   };flag_clicked=true;
+   })
+   .attr("y", pad*3)
+      .attr("rx",5)
+      .attr("ry",5)
+   .attr("width", 300)
+   .attr("height", 50);
+ 
+// テキスト
+for(i=0;i<4;i++){
+area.append("text")
+.attr({
+    id:"text"+String(i+1),
+	x:barWidth/3,
+	y:barHeight/2+i*pad+5,
+})
+  .attr("text-anchor", "middle") // テキストの位置を中央揃えに。
+
+ .style({
+	 fill:"black",
+ })
+ .text("text"+String(i+1));
+}
+
+// onclick function
+d3.select("#text1") .on("click",function(){
+if(flag_clicked==false){
+        ChangeText();
+
+
+	   d3.select("#rect1")  .style("fill","#e66160");
+	   
+	   d3.select("#rect2").style("fill","#5175ff");
+	   d3.select("#rect3").style("fill","#e6e6e6");
+	   d3.select("#rect4").style("fill","#e6e6e6");
+			  };flag_clicked=true;
+   }); 
+   
+d3.select("#text2") .on("click",function(){
+if(flag_clicked==false){
+      ChangeText();
+
+
+	   d3.select("#rect2")  .style("fill","#205df4");
+
+	   d3.select("#rect1").style("fill","#e6e6e6");
+	   d3.select("#rect3").style("fill","#e6e6e6");
+	   d3.select("#rect4").style("fill","#e6e6e6");
+	   };flag_clicked=true;
+   });
+   
+d3.select("#text3")  .on("click",function(){
+if(flag_clicked==false){
+         ChangeText();
+
+
+	   d3.select("#rect3")  .style("fill","#e66160");
+
+	   d3.select("#rect1").style("fill","#e6e6e6");
+	   d3.select("#rect2").style("fill","#5175ff");
+	   d3.select("#rect4").style("fill","#e6e6e6");
+	   };flag_clicked=true;
+   });
+    
+d3.select("#text4")   .on("click",function(){
+if(flag_clicked==false){
+      ChangeText(); 
+	      d3.select("#rect4")  .style("fill","#e66160");
+	      
+	    d3.select("#rect1").style("fill","#e6e6e6");
+	   d3.select("#rect2").style("fill","#5175ff");
+	   d3.select("#rect3").style("fill","#e6e6e6");
+	   };flag_clicked=true;
+   });
+ 
+
+ 
+// change function  
+function ChangeText(){ 
+	       d3.select("#text1").text("×　text1").attr("opacity",0.4); 
+           d3.select("#text2").attr("x",barWidth/4).text("◯　text2").style("fill","white");
+           d3.select("#text3").text("×　text3").attr("opacity",0.4);
+	       d3.select("#text4").text("×　text4").attr("opacity",0.4);
+           
+           explain();
+ 
+            } 　
+
+ 
+
+
+///explanation
+var under=svg.append("g")
+          .attr("transform", translation(pad,h-pad/2));
+function explain(){
+under.append("text")
+
+     .attr({
+	     x:0,
+	     y:0,
+     })
+     .style("fill","black")
+　　.text("<explanation>");
+}
+
+
+// setting
+function translation(x,y) {
+  return 'translate(' + x + ',' + y + ')';
+}
+ 　　</script>
+ </body>
+</html>
+
