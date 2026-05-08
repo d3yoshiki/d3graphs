@@ -1,0 +1,130 @@
+<!doctype html>
+<head>
+<meta charset="UTF-8">
+<title>pie chart</title>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+<h2>pie chart</h2>
+<script>
+		var dataset = [
+		
+			{legend:"apple", value:10, color:"red",values:40},
+			{legend:"orange", value:45, color:"orange",values:5},
+			{legend:"banana", value:25, color:"yellow",values:30},
+			{legend:"peach", value:70, color:"pink",values:17},
+			{legend:"grape", value:20, color:"purple",values:19}
+		
+			];
+    var pi=Math.PI;
+		var width = 700; 
+		var height = 400;
+		var radius = 230;
+		var svg = d3.select("body")
+		        .append("svg")
+			.attr("width", width)
+			.attr("height", height)	
+                        .style("background","white");
+					
+		var center=svg.append("g")   
+		  .attr("transform", translation(width/2,height-20))  
+
+		var arc = d3.svg.arc()  
+				.outerRadius(radius)
+				.innerRadius(radius-140);
+		var pie = d3.layout.pie()
+				.sort(null)
+				.value(function(d){ return d["value"]; })
+			        .startAngle(pi*-0.5)
+                                .endAngle(pi*0.5);
+                   
+                   
+var path = center.datum(dataset).selectAll("path")
+			.data(pie) 
+			.enter()
+                        .append("path")
+		   	.attr("d", arc) 
+		        .each(function(d){this._current=d;})
+		        .style("opacity",0.7)
+		        .attr("stroke-width",4)
+			.attr("stroke","white")
+		  	.attr("fill", function(d){ return d.data.color; })
+//transition
+          .transition() 
+          .duration(450) 
+          .attrTween(
+          "d",
+           function(d){
+	          var interpolate=d3.interpolate(
+	          {startAngle:pi*-0.5,endAngle:pi*-0.5},
+   	          {startAngle:d.startAngle,endAngle:d.endAngle});
+	         
+	         return function(t){return arc(interpolate(t));}
+           }
+          );　
+// transiton 
+var flag=1;
+
+function change(){
+if(flag==1){pie.value(function(d){ return d["values"]; }); }
+else if(flag==-1){pie.value(function(d){ return d["value"]; }); }	
+	
+	paths = center .selectAll("path")
+				.data(pie) ;
+	paths.transition().duration(300).ease("linear").attrTween("d", arcTween);
+	flag*=-1
+}	    
+function arcTween(newangle){
+	
+	 var i = d3.interpolate(this._current, newangle);
+  this._current = i(0);
+  return function(t) {　
+    return arc(i(t));
+      };
+}
+
+
+svg.append("rect")
+   .attr("x", 10)
+   .attr("y", 10)
+   .attr("id","rect1")
+   .attr("rx",5)
+   .attr("ry",5)
+   .attr("width", 200)
+   .attr("height", 50)
+   .attr("opacity",0.7)
+   .style("fill","blue")
+   .style("stroke-width",4).style("stroke","#0c0a35")
+   .on("click",function(){
+flag=1;
+change();
+	  d3.select(this).style("fill","blue");
+     d3.select("#rect2").style("fill","white");
+  });
+
+svg.append("rect")
+   .attr("x", 220)
+   .attr("y", 10)
+   .attr("id","rect2")
+   .attr("rx",5)
+   .attr("ry",5)
+   .attr("width", 200)
+   .attr("height", 50)
+   .style("fill","white")
+   .style("stroke-width",4).style("stroke","#0c0a35")
+   .attr("opacity",0.7)
+   .on("click",function(){
+	flag=-1;
+	  change();
+	  d3.select(this).style("fill","blue");
+	       d3.select("#rect1").style("fill","white");
+
+  });
+
+//translation 
+function translation(x,y) {
+  return 'translate(' + x + ',' + y + ')';
+}
+</script>
+</body>
+</html>
