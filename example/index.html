@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<style>
+</style>
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+var w=800;
+var h=600;
+var svg=d3.select("body")
+         .append("svg")
+         .attr({width:w,height:h});
+
+var pi=Math.PI
+var center=svg.append("g")
+          .attr("transform", "translate(" + (w/2) + "," + (h/2+30) + ")");
+var under=svg.append("g")
+          .attr("transform", "translate(" + (w/2) + "," + (h/2+35) + ")");
+
+dataC=[
+      {name:"name1", text:"text example1", color:"purple"},
+			{name:"name2",text:"text example2", color:"yellow"},
+			{name:"name3",text:"text example3", color:"#14eef9"},
+			{name:"name4",text:"text example4", color:"orange"},
+			{ name:"name5",text:"tex example5", color:"green"},
+			]
+
+under.selectAll("circle")
+.data(dataC)
+  .enter()
+  .append("circle")
+ 	.attr("fill","#ccc")
+ 	.attr("id",function(d){return d["name"];})
+  .attr({
+	  cx:-50,
+	  cy:function(d,i){return i*20},
+	  r:7,
+  });
+  
+  
+under.selectAll("text")
+.data(dataC)
+.enter()
+.append("text")
+.text(function(d){return d["text"];})
+.attr({
+	  x:-35,
+	  y:function(d,i){return i*20+5},
+})
+.style("font-family","sans-serif")
+.style("font-size","13px")
+.style("fill","#666666")
+;
+  
+
+//inside
+var arcIn=d3.svg.arc()
+        .innerRadius(130)
+        .outerRadius(150)
+        .startAngle(pi*-0.5)
+        .endAngle(-pi/6);
+center.append("path")
+   .attr("d",arcIn)
+   .attr("fill","yellow")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)    
+ 
+ var arc2In=d3.svg.arc()
+        .innerRadius(130)
+        .outerRadius(150)
+        .startAngle(-pi/6)
+        .endAngle(pi/6);
+center.append("path")
+   .attr("d",arc2In)
+   .attr("fill","#ccc")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)
+      		       ;  
+
+  var arc3In=d3.svg.arc()
+        .innerRadius(130)
+        .outerRadius(150)
+        .startAngle(pi/6)
+        .endAngle(pi*0.5);
+center.append("path")
+   .attr("d",arc3In)
+   .attr("fill","#ccc")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)
+
+//middle
+var arcM=d3.svg.arc()
+        .innerRadius(150)
+        .outerRadius(170)
+        .startAngle(pi*-0.5)
+        .endAngle(-pi/6);
+center.append("path")
+   .attr("d",arcM)
+   .attr("fill","#ccc")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)    
+ 
+ var arc2M=d3.svg.arc()
+        .innerRadius(150)
+        .outerRadius(170)
+        .startAngle(-pi/6)
+        .endAngle(pi/6);
+center.append("path")
+   .attr("d",arc2M)
+   .attr("fill","orange")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)
+      		       ;  
+
+  var arc3M=d3.svg.arc()
+        .innerRadius(150)
+        .outerRadius(170)
+        .startAngle(pi/6)
+        .endAngle(pi*0.5);
+center.append("path")
+   .attr("d",arc3M)
+   .attr("fill","green")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)
+
+//outside
+var arcO=d3.svg.arc()
+        .innerRadius(170)
+        .outerRadius(190)
+        .startAngle(pi*-0.5)
+        .endAngle(-pi/6);
+center.append("path")
+   .attr("d",arcO)
+   .attr("fill","#ccc")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)    
+ 
+ var arc2O=d3.svg.arc()
+        .innerRadius(170)
+        .outerRadius(190)
+        .startAngle(-pi/6)
+        .endAngle(pi/6);
+center.append("path")
+   .attr("d",arc2O)
+   .attr("fill","#14eef9")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)
+      		       ;  
+
+  var arc3O=d3.svg.arc()
+        .innerRadius(170)
+        .outerRadius(190)
+        .startAngle(pi/6)
+        .endAngle(pi*0.5);
+center.append("path")
+   .attr("d",arc3O)
+   .attr("fill","purple")
+   .attr("stroke", "white")
+      .attr("stroke-width",2)
+      
+
+//outer arc
+var data=["first","second","third","fourth","fifth","sixth","seventh","eight","ninth","tenth"];
+var r = d3.scale.linear()
+            .domain([0,data.length])
+            .range([-85,103]);
+ 
+var rotated = center.selectAll(".surroundings").data(data).enter()
+                .append("g")
+                .attr("class","surroundings")
+                .attr("transform","translate(" + (w/2) + "," + (h/2+50) + ")")
+                .attr("transform",function(d,i){ return "rotate(" + r(i) + ")"; });
+
+rotated.append("text")
+        .attr("x",0)
+        .attr("y", -192)
+        .attr("text-anchor", "middle") // テキストの位置を中央揃えに。
+        .attr("width",100)
+        .attr("height",100)
+        .text(function(d,i){ return d; })
+　　　　.attr("fill","#666666")
+        .style("font-family","fantasy");
+
+
+
+
+center
+ .append("text") 
+.attr("x",0)
+.attr("y",-45)
+.text("This is it.")
+.style("fill","blue")
+ .attr("id","text")
+.style("text-anchor","middle")
+.style("font-size","30px")
+.style("font-family","Courier New");
+
+
+var dataset=[	{ state:"state1",value:10, color:"red"},
+			{state:"state2",value:10, color:"yellow"},
+			{ state:"state3",value:10, color:"#bce2e8"},
+		];
+
+	var arcOuter = d3.svg.arc()
+				.outerRadius(130)
+				.innerRadius(190)
+			;
+				
+
+var pie = d3.layout.pie()
+				.sort(null)
+				.value(function(d){ return d["value"]; })
+			    .startAngle(pi*-0.5)
+                .endAngle(pi*0.5);
+
+
+		var g = center.selectAll()
+				.data(pie(dataset))
+				.enter()
+				.append("g")
+				.attr("id",function(d){return d.state;});
+
+		g.append("path")
+			.attr("d", arcOuter)
+			 .attr("fill","transparent")
+				.attr("id",function(d){return d.data['state'];});
+      
+        g.select("#state1")
+        .on("mouseover",mouseHandle1)
+        .on("mouseout",function(){g.select("#state1").style("stroke","none");
+	        under.select("#name1").style("fill","#ccc");
+        } );
+  
+      g.select("#state2")
+        .on("mouseover",mouseHandle2)       
+         .on("mouseout",function(){g.select("#state2").style("stroke","none");
+	       under.select("#name2").style("fill","#ccc"); 
+	       	       under.select("#name3").style("fill","#ccc");  
+ 
+         } );
+       
+            g.select("#state3")
+        .on("mouseover",mouseHandle3)
+             .on("mouseout",mouse3);
+
+
+function mouseHandle1(){
+		 center.select("#text").text("1 Succeed!");
+		 g.select("#state1").style("stroke-width",3).style("stroke","blue");
+        under.select("#name1").style("fill","yellow");
+       
+}
+function mouseHandle2(){
+		 center.select("#text").text("2 Got it!");
+		 		 g.select("#state2").style("stroke-width",3).style("stroke","blue");
+under.select("#name2").style("fill","#14eef9");
+under.select("#name3").style("fill","orange");
+
+}
+function mouseHandle3(){
+		 center.select("#text").text("3 Stay.");
+		 g.select("#state3").style("stroke-width",3).style("stroke","blue");
+		 under.select("#name4").style("fill","green");
+         under.select("#name5").style("fill","purple");
+
+}
+
+
+
+function mouse3(){
+	 g.select("#state3").style("stroke","none");
+        under.select("#name4").style("fill","#ccc");
+         under.select("#name5").style("fill","#ccc");
+          }
+
+</script>
+</body>
+</html>
