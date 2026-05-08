@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<head>
+   <meta charset="utf-8">
+   <title>pyramid</title>
+ <style>
+
+ .tick line{
+    opacity: 1;
+  }
+
+.axis text {
+          font: 14px sans-serif;
+        }
+ 
+.axis path,
+.axis line {
+          fill: none;
+          stroke: #000;
+          stroke-width: 0.5;
+          shape-rendering: crispEdges;
+        }
+
+</style>
+</head>
+<body>
+<p>
+<input type="button" value="UPDATE" id="btn1">	
+</p>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+var w=600,
+    h=400,
+    padding=50,
+    pad=19;
+
+var svg=d3.select("body").append("svg")
+         .attr({width:w,height:h});
+
+// apennd g on both sides          
+var underR=svg.append("g")
+          .attr("transform", "translate(" + (w/2+pad )+ "," + (h-padding-20) + ")");
+var underReverse=svg.append("g")
+          .attr("transform", "translate(" + (w/2-pad) + "," + (h-padding-20) + ")" + 'scale(-1,1)');
+
+
+
+// scale
+var xscaleRight=d3.scale.linear()
+            .domain([0,10])
+            .range([0,w/2-padding]);
+            
+var xscaleLeft=d3.scale.linear()
+            .domain([0,10])
+            .range([0,w/2-padding]);
+ 
+ var xscaleLeft2=d3.scale.linear()
+            .domain([0,10]) 
+            .range([w/2-padding,0]);          
+
+
+//　軸のオブジェクト          
+var xAxisR = d3.svg.axis()
+                .scale(xscaleRight)
+                .orient("bottom")
+                .ticks(8) 
+                .innerTickSize(5)
+               //  .tickFormat(d3.format('%'))
+  　　　　　　  .outerTickSize(-5); // 棒の長さと方向。
+
+underR.attr("class", "x axis")
+      .call(xAxisR);
+
+
+
+
+var xAxisL = d3.svg.axis()
+                .scale(xscaleLeft2)
+                .orient("bottom")
+                .ticks(8) 
+                .innerTickSize(5)
+  　　　　　　  .outerTickSize(-5); // 棒の長さと方向。
+
+
+svg.append('g')
+  .attr('class', 'axis x left')
+  .attr('transform',"translate(" + (padding-pad)+ "," + (h-padding-20) + ")")
+  .call(xAxisL);
+
+
+
+
+// function init()
+function init(){
+       svg.selectAll("rect").remove();
+
+    // dataset
+	   var datasetM=[];
+	   var datasetF=[];
+	   
+	 for (var i = 0; i <14; i++) {
+		   		var x=(Math.random()*9)+1;
+		   		var y=(Math.random()*9)+1;
+		   		datasetM.push(x);
+		   		datasetF.push(y);
+
+		   			}
+
+
+  underR.selectAll("rect")
+        .data(datasetM)
+        .enter()
+		.append("rect")
+		.attr({
+			x:0,
+			y:function(d,i){return -padding*0.45-i*20},
+			width:0,
+			height:15,
+			fill:"red",
+			opacity:0.5,
+		 })
+       .attr("rx", 3)
+       .attr("ry", 3)
+	   .on("mouseover",function(){
+	           d3.select(this).style("opacity",.8)
+             })
+	   .on("mouseout",function(){
+		    	d3.select(this).style("opacity",0.5)
+			})
+
+			.transition().duration(800).ease("linear").delay(function(d,i){return 900-i*100})
+
+.attr({
+	width:function(d){return xscaleRight(d);}
+
+});
+  
+  
+     
+		underReverse.selectAll("rect")
+			.data(datasetF)
+			.enter()
+			.append("rect")
+			.attr({
+				x:0,
+				y:function(d,i){return -padding*0.45-i*20},
+				width:0,
+				height:15,
+				fill:"blue",
+				opacity:0.5,
+				})  
+			.attr("rx", 3)
+            .attr("ry", 3)
+			.on("mouseover",function(){
+				d3.select(this).style("opacity",.8)
+				})
+				.on("mouseout",function(){
+					d3.select(this).style("opacity",0.5)
+					})
+				.transition().duration(800).ease("linear").delay(function(d,i){return 900-i*100})
+
+.attr({
+	width:function(d){return xscaleLeft(d);}
+});	
+					
+};
+
+
+init();
+
+
+// ordinal numbers      
+var center=svg.append("g")
+          .attr("transform", "translate(" + (w/2)+ "," + (0) + ")");
+
+for(i=0;i<14;i++){
+center.append("text")
+      .attr("y",function(){return h-padding-pad-10-20*i;})
+      .attr("x",0)
+      .style("text-anchor", "middle")
+      .text("-"+String(i)+"-");  
+};
+ //(age)
+center.append("text")
+      .attr("y",h-pad)
+      .attr("x",0)
+      .style("text-anchor", "middle")
+      .text("(AGE)");
+      
+
+// button function      
+document.getElementById("btn1").onclick=function(){
+	init();
+}
+
+</script>
+</body>
+</html>
