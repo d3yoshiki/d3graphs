@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>   　 
+<meta charset="utf-8"> 
+<title>        
+Slider Quiz
+</title>      
+<style>
+#back{
+	 background: #eff5fa;      
+	 position:fixed;   
+	 
+ }　
+
+#way2{z-index: 2;}
+#line{ z-index: 1; 
+	opacity: .2;
+	stroke: gray;
+	stroke-width: 6px;
+	fill: none;
+}　　
+</style>
+</head>
+<body>　
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+var w=600;
+var h=340; 
+var pad=50,radius=20,radius2=10;   
+var svg=d3.select("body")　
+         .append("svg")
+         .attr({width:w,height:h,id:"back"});
+
+var center=svg.append("g") 
+            .attr("transform",translation(w/2,h/2)) ; 
+
+
+// drag object
+var drag=d3.behavior.drag() 
+            .on("dragstart",start)  
+            .on("drag", dragmove) ;
+                   
+          
+// path  
+var point=[[-180,0],[180,0]];
+ 
+var line=d3.svg.line()
+     .x(function(d){return d[0];})
+     .y(function(d){return d[1];});  　
+ 
+center.append("path")       
+      .attr("d",line(point))  
+      .attr("id","line");  　
+ 
+// 0------------------100
+center.append("text").attr({
+	  x:-155,     　
+	  y:45,
+	  id:""
+    })
+.style("font-family","sans-serif")
+.style("font-size","25px")
+.style("fill","#ccc").text("0%").attr("text-anchor", "end") ;
+ 
+  
+      //100
+   center.append("text").attr({
+	  x:155,  
+	  y:45,
+	  id:""
+    })
+.style("font-family","sans-serif")
+.style("font-size","25px")
+.style("fill","#ccc").text("100%").attr("text-anchor", "start") ;
+
+//polyline *2 arrows
+center.append("polyline")      　　
+    .attr("id","arrow1")
+    .attr("points", "-25,-10 -35,0 -25,10 ")   
+    .attr("stroke", "blue")  
+    .attr("fill", "none")   
+    .attr("stroke-width",3)   
+    .attr("opacity",.6);
+
+
+center.append("polyline") 
+    .attr("points", "25,-10 35,0 25,10 ")   
+    .attr("stroke", "blue")  
+    .attr("fill", "none")   
+    .attr("id","arrow2")    
+    .attr("stroke-width", 3)             
+        .attr("opacity",.6);
+
+// arrows function
+ 
+ function arrows(){
+ d3.select("#arrow1")  
+ .transition().duration(500)
+  .attr("points", "-30,-10 -40,0 -30,10 ") 
+   .transition().duration(500) 
+  .attr("points", "-25,-10 -35,0 -25,10 ")   ;
+  
+   d3.select("#arrow2")
+ .transition().duration(500)
+  .attr("points", "30,-10 40,0 30,10 ") 
+   .transition().duration(500)
+  .attr("points", "25,-10 35,0 25,10 ")   ;
+}
+ 
+ 
+ 
+// circle    
+
+ center.append("circle") 
+    .attr("r", 6) 
+    .attr("cx", -50)
+    .attr("id","circle2") 
+    .attr("cy", 0) 
+    .style("opacity",.7)
+    .style({fill:"none"});   
+    
+center.append("circle")
+    .attr("r", radius)
+    .attr("cx", 0)
+    .attr("id","circle1")   
+    .attr("cy", 0)
+    .style({fill:"gray"})
+    .call(drag); 
+
+
+//scale    
+var xscale=d3.scale.linear()
+.domain([-180,180])
+.range([0,100]);
+
+// text drag value 
+center.append("text").attr({
+	  x:0,
+	  y:-45, 
+	  id:"text"
+})
+.style("font-family","sans-serif")　　　　　
+.style("font-size","43px")
+.style("fill","#ccc")
+.text("?").attr("text-anchor", "middle") ;
+
+center.append("text").attr({
+	  x:0,
+	  y:-77, 
+	  id:"predict"     
+})
+.style("font-size",20).text("あなたの予想")
+.style("fill","none").attr("text-anchor","middle");
+
+
+
+// line
+ var point2=[[-50,40],[-50,-1]];
+
+center.append("path")       
+       .attr("d",line(point2))  
+       .attr("id","way1")
+        .attr("stroke-dasharray", "1, 1")    
+
+var point3=[[0,0],[0,0]]
+center.append("path")       
+       .attr("d",line(point3))
+       .attr("id","way2")
+        .attr("stroke-dasharray", "1, 1")  
+
+
+// function & flag  
+ var flag_dragged=false;  
+   
+ // function dragstart  
+ 
+function start(){
+if(flag_dragged==false){ 
+	flag_dragged=true;
+	clearInterval(time);
+	d3.select("#arrow1")
+	.remove();
+	d3.select("#arrow2")
+	.remove();
+	d3.select("#rect").attr("opacity",0.7);
+	}
+
+}
+//function dragmove  
+var answerText;  
+function dragmove(d) {
+
+ 　　　if(flag_dragged==true){ d3.select(this)
+      .attr("cx", Math.max(-180,Math.min(180,d3.event.x)));
+      var num=Math.max(0,Math.min(100,Math.round(xscale(d3.event.x))))
+            
+   d3.select("#way2")
+   .attr("d",line([[Math.max(-180,Math.min(180,d3.event.x)),-40],
+   [Math.max(-180,Math.min(180,d3.event.x)),1]])) ;
+
+       
+ 
+        　d3.select("#predict")
+        .attr("x",Math.max(-180,Math.min(180,d3.event.x)));
+                
+      d3.select("#text").style("font-size",30).text(num).attr("x",Math.max(-180,Math.min(180,d3.event.x)));
+    
+     if(num>=50){answerText="more than 50"}
+     else{answerText="less than 50"};
+               }; 
+               }  
+   
+// append button 
+     
+  
+ center.append("rect")
+    .attr("x", -75)
+   .attr("y", 45)　
+   .attr("id","rect")
+   .attr("rx",25) 
+   .attr("ry",25)
+   .attr("width", 150) 
+   .attr("height", 50)　
+   .style("fill","green") 
+   .attr("opacity",0.4) 
+   .on("click",function(){   //function
+if(flag_dragged==true){ d3.select(this).remove();
+	  center.append("text").attr({
+	  x:0,          
+	  y:150,    
+	  id:"answer"          
+                   }) 
+.style("font-family","sans-serif") 
+.style("font-size",35)
+.style("fill","#ccc").text(answerText).attr("text-anchor", "middle") ;
+  d3.select("#circle1").transition().duration(300).attr("r",radius2-3)
+  .style("fill","white").style("stroke","blue").style("stroke-width",5).style("opacity",.8);
+  
+     d3.select("#way2").transition().delay(300).style("stroke","black");  
+   d3.select("#way1").transition().delay(1000).style("stroke","black") ;
+    d3.select("#circle2").transition().delay(600)   
+    .duration(600).attr("r",radius2+2).style("fill","white").style("stroke","red").style("stroke-width",7);
+    d3.select("#predict").style("fill","gray")
+    
+  center.append("text").attr({       
+	  x:-50,   
+	  y:65,        
+	  id:"answer"  
+                   }) 
+.style("font-family","sans-serif")
+.style("font-size","30px")
+.transition()
+.delay(1100)
+.style("fill","gray").text("答え："+Math.round(xscale(-50))).attr("text-anchor", "middle") ;
+
+
+
+     } 
+}); 
+
+// function
+arrows();  
+var time =setInterval("arrows()", 1000);
+
+// setting
+function translation(x,y) {
+  return 'translate(' + x + ',' + y + ')';
+}
+</script>
+</body>
+</html>
