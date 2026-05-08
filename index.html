@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<head>
+ <meta charset="utf-8">
+ <title>
+ </title>
+ <style>
+ svg{border:1px solid blue;}
+ </style>
+
+  </head>
+  
+<body>
+
+<p>
+<input type="button" value="random Value" id="btn1">
+<input type="button" value="AutoAnimation" id="btn2">
+</p>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+function getNum(){return 20+Math.round(Math.random()*50);}
+
+
+
+function randomValue(){
+d3.select("#c1").transition()
+.duration(300).ease("linear")
+.attr("r",getNum);
+
+d3.select("#c2").transition()
+.duration(300).ease("linear")
+.attr("r",getNum);
+
+d3.select("#c3").transition()
+.duration(300).ease("linear")
+.attr("r",getNum);
+
+};
+
+//animation
+function　animation(num){
+       var dataset=[[],[],[]];
+       for(i=0;i<num;i++){
+                          dataset[0].push(20+Math.round(Math.random()*70));
+                     	  dataset[1].push(20+Math.round(Math.random()*70));
+	                      dataset[2].push(20+Math.round(Math.random()*70));
+                          }
+
+       for(i=0;i<num;i++){ 
+		   			d3.select("#c1").transition()
+			   			.duration(300).ease("linear").delay(i*700)
+		   				.attr("r",dataset[0][i]);
+
+
+		   			d3.select("#c2").transition().delay(i*700)
+		   				.duration(300).ease("linear")
+		   				.attr("r",dataset[1][i]);
+
+		   			d3.select("#c3").transition().delay(i*700)
+		   				.duration(300).ease("linear")
+		   				.attr("r",dataset[2][i]);
+                     }
+};
+
+
+
+
+var w=600;
+var h=400; 
+var svg=d3.select("body")
+         .append("svg")
+         .attr({width:w,height:h});
+         
+var center=svg.append("g")
+          .attr("transform", translation(w/2,h/2));
+
+ 
+
+// circle1
+
+center
+.append("circle")
+  .attr({
+	  cx:0,
+	  cy:-Math.sqrt(3)*90+80,
+	  r:50, 
+	  fill:"blue",
+	  opacity:"0.8",
+	  	  id:"c2"
+
+  })
+// circle2 
+ center
+.append("circle")
+  .attr({
+	  cx:90,
+	  cy:80,
+	  r:50, 
+	  fill:"red",
+	  opacity:"0.8",
+	  	  id:"c3"
+ 
+  })
+
+//circle3
+ center
+.append("circle")
+  .attr({
+	  cx:-90,
+	  cy:80,
+	  r:50, 
+	  fill:"green",
+	  opacity:"0.8",
+	  id:"c1"
+  }) 
+
+//button function
+
+document.getElementById("btn1").onclick=randomValue;
+document.getElementById("btn2").onclick=function(){animation(15);}
+
+//setting
+function translation(x,y) {
+  return 'translate(' + x + ',' + y + ')';
+};
+
+
+ 　　</script>
+ </body>
+</html>
